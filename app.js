@@ -16,16 +16,21 @@ const encodedURL = encodeURI(argv.address)
 const googleAPIUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedURL}&key=AIzaSyA0p5sX85lxGISNRbtMZHhqLPah5BGJLmo`
 axios.get(googleAPIUrl)
     .then((response) => {
-        console.log(response.data.results[0].formatted_address);
-        var lat = response.data.results[0].geometry.location.lat;
-        var lng = response.data.results[0].geometry.location.lng;
-        const weatherAPIUrl = `https://api.darksky.net/forecast/8bd8f0cde65150727e932bf524790714/${lat},${lng}`;
+        if (response.data.results.length == 0) {
+            return console.log('Enter Currect Address');
+        } else {
+            console.log(response.data.results[0].formatted_address);
+            var lat = response.data.results[0].geometry.location.lat;
+            var lng = response.data.results[0].geometry.location.lng;
+            const weatherAPIUrl = `https://api.darksky.net/forecast/8bd8f0cde65150727e932bf524790714/${lat},${lng}`;
 
-        return axios.get(weatherAPIUrl).then((response) => {
-            var temperature = response.data.currently.temperature;
-            var apparentTemperature = response.data.currently.apparentTemperature;
-            console.log(`It's currently ${temperature} F. It feels like ${apparentTemperature}F.`);
-        })
+            return axios.get(weatherAPIUrl).then((response) => {
+                var temperature = response.data.currently.temperature;
+                var apparentTemperature = response.data.currently.apparentTemperature;
+                console.log(`It's currently ${temperature} F. It feels like ${apparentTemperature}F.`);
+            })
+        }
+
     })
     .catch((error) => {
         console.log(error);
